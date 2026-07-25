@@ -1,0 +1,3 @@
+order_id,customer_id,product_id,quantity,amount,fail_at,comp_fail_at
+ORD-PAYFAIL-001,CUST-011,SKU-PHONE-011,1,19999.00,PAYMENT,
+ORD-PAYFAIL-002,CUST-012,SKU-BAG-012,3,2997.00,PAYMENT,

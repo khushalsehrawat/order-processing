@@ -1,0 +1,134 @@
+<section class="hero">
+  <div>
+    <p class="eyebrow">ORDER OPERATIONS</p>
+    <h1>Order processing overview</h1>
+    <p>Track parallel service execution, retries, compensation and shipping notifications.</p>
+  </div>
+
+  <button class="refresh" type="button" (click)="load()" [disabled]="loading">
+    {{ loading ? 'Refreshing…' : 'Refresh' }}
+  </button>
+
+</section>
+
+<section class="stats">
+  <article><span>Total</span><strong>{{ totalElements }}</strong></article>
+  <article><span>Placed</span><strong>{{ statusCount('PLACED') }}</strong></article>
+  <article><span>Shipped</span><strong>{{ statusCount('SHIPPED') }}</strong></article>
+  <article class="attention"><span>Needs attention</span><strong>{{ statusCount('NEEDS_ATTENTION') }}</strong></article>
+</section>
+
+<section class="upload-card">
+  <div>
+    <h2>Import orders</h2>
+    <p>Upload the supplied CSV. The backend streams rows and ignores duplicate order IDs.</p>
+  </div>
+
+  <label class="file-picker">
+    <input type="file" accept=".csv,text/csv" (change)="chooseFile($event)">
+    <span>{{ selectedFile?.name || 'Choose CSV file' }}</span>
+  </label>
+
+  <button class="primary" type="button" (click)="upload()" [disabled]="!selectedFile || uploading">
+    {{ uploading ? 'Uploading…' : 'Upload and process' }}
+  </button>
+  <button class="danger" type="button" (click)="resetData()" [disabled]="resetting">
+    {{ resetting ? 'Resetting...' : 'Reset test data' }}
+  </button>
+</section>
+
+<div class="notice success" *ngIf="message">{{ message }}</div>
+<div class="notice error" *ngIf="error">{{ error }}</div>
+
+<section class="orders-card">
+  <div class="table-header">
+    <div>
+      <h2>Orders</h2>
+      <p>Data refreshes automatically every five seconds.</p>
+    </div>
+
+    <div class="filters">
+      <input
+        type="search"
+        placeholder="Search order, customer or product"
+        [(ngModel)]="search"
+        (ngModelChange)="applyFilters()">
+
+      <select [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()">
+        <option *ngFor="let status of statuses" [value]="status">
+          {{ status.replaceAll('_', ' ') }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Customer</th>
+          <th>Product</th>
+          <th>Qty</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Updated</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let order of filteredOrders; trackBy: trackById">
+          <td>
+            <a class="order-link" [routerLink]="['/orders', order.id]">
+              {{ order.externalOrderId }}
+            </a>
+          </td>
+          <td>{{ order.customerId }}</td>
+          <td>{{ order.productId }}</td>
+          <td>{{ order.quantity }}</td>
+          <td>{{ order.amount | currency:'INR':'symbol':'1.2-2' }}</td>
+          <td><app-status-badge [status]="order.status"/></td>
+          <td>{{ order.updatedAt | date:'medium' }}</td>
+          <td>
+            <div class="actions">
+              <a class="secondary" [routerLink]="['/orders', order.id]">Details</a>
+
+              <button
+                *ngIf="order.status === 'PLACED'"
+                class="success-button"
+                type="button"
+                [disabled]="actionId === order.id"
+                (click)="markShipped(order)">
+                Mark shipped
+              </button>
+
+              <button
+                *ngIf="order.status === 'NEEDS_ATTENTION'"
+                class="warning-button"
+                type="button"
+                [disabled]="actionId === order.id"
+                (click)="retryUndo(order)">
+                Retry undo
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="!loading && filteredOrders.length === 0">
+          <td colspan="8" class="empty">
+            No orders match the current filters.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <span>Page {{ page + 1 }} of {{ totalPages || 1 }}</span>
+    <div>
+      <button type="button" (click)="previous()" [disabled]="page === 0">Previous</button>
+      <button type="button" (click)="next()" [disabled]="page + 1 >= totalPages">Next</button>
+    </div>
+  </div>
+</section>

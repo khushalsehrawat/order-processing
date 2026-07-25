@@ -1,0 +1,3 @@
+order_id,customer_id,product_id,quantity,amount,fail_at,comp_fail_at
+DEMO-SHIPPING-FAIL-001,CUST-SHIP-001,SKU-SHOES,1,3499.00,SHIPPING,
+DEMO-SHIPPING-FAIL-002,CUST-SHIP-002,SKU-JACKET,1,5999.00,SHIPPING,

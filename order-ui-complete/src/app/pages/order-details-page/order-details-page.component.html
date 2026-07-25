@@ -1,0 +1,118 @@
+<a class="back" routerLink="/">← Back to orders</a>
+
+<div class="loading" *ngIf="loading">Loading order details…</div>
+<div class="notice error" *ngIf="error">{{ error }}</div>
+<div class="notice success" *ngIf="message">{{ message }}</div>
+
+<ng-container *ngIf="details as data">
+  <section class="details-hero">
+    <div>
+      <p class="eyebrow">ORDER DETAILS</p>
+      <h1>{{ data.order.externalOrderId }}</h1>
+      <app-status-badge [status]="data.order.status"/>
+    </div>
+
+    <div class="hero-actions">
+      <button
+        *ngIf="data.order.status === 'PLACED'"
+        class="ship"
+        type="button"
+        [disabled]="actionRunning"
+        (click)="markShipped()">
+        Mark shipped
+      </button>
+
+      <button
+        *ngIf="data.order.status === 'NEEDS_ATTENTION'"
+        class="retry"
+        type="button"
+        [disabled]="actionRunning"
+        (click)="retryUndo()">
+        Retry failed undo
+      </button>
+
+      <button type="button" class="refresh" (click)="load()">Refresh</button>
+    </div>
+  </section>
+
+  <section class="summary-grid">
+    <article><span>Customer</span><strong>{{ data.order.customerId }}</strong></article>
+    <article><span>Product</span><strong>{{ data.order.productId }}</strong></article>
+    <article><span>Quantity</span><strong>{{ data.order.quantity }}</strong></article>
+    <article><span>Amount</span><strong>{{ data.order.amount | currency:'INR':'symbol':'1.2-2' }}</strong></article>
+    <article><span>Created</span><strong>{{ data.order.createdAt | date:'medium' }}</strong></article>
+    <article><span>Updated</span><strong>{{ data.order.updatedAt | date:'medium' }}</strong></article>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <div>
+        <h2>Execution steps</h2>
+        <p>All four primary operations are attempted concurrently.</p>
+      </div>
+    </div>
+
+    <div class="step-grid">
+      <article class="step" *ngFor="let step of executionSteps()">
+        <div class="step-top">
+          <strong>{{ step.stepName }}</strong>
+          <span [attr.data-step-status]="step.status">{{ step.status.replaceAll('_', ' ') }}</span>
+        </div>
+        <dl>
+          <div><dt>Attempts</dt><dd>{{ step.attemptCount }}</dd></div>
+          <div><dt>Started</dt><dd>{{ step.startedAt | date:'medium' }}</dd></div>
+          <div><dt>Completed</dt><dd>{{ step.completedAt | date:'medium' }}</dd></div>
+        </dl>
+        <p class="error-text" *ngIf="step.lastError">{{ step.lastError }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel" *ngIf="compensationSteps().length">
+    <div class="panel-title">
+      <div>
+        <h2>Undo / compensation steps</h2>
+        <p>Only successfully completed primary steps are undone.</p>
+      </div>
+    </div>
+
+    <div class="step-grid">
+      <article class="step compensation" *ngFor="let step of compensationSteps()">
+        <div class="step-top">
+          <strong>{{ step.stepName }}</strong>
+          <span [attr.data-step-status]="step.status">{{ step.status.replaceAll('_', ' ') }}</span>
+        </div>
+        <dl>
+          <div><dt>Attempts</dt><dd>{{ step.attemptCount }}</dd></div>
+          <div><dt>Completed</dt><dd>{{ step.completedAt | date:'medium' }}</dd></div>
+        </dl>
+        <p class="error-text" *ngIf="step.lastError">{{ step.lastError }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">
+      <div>
+        <h2>Audit timeline</h2>
+        <p>Persistent trace of attempts, successes, failures and recovery.</p>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <article *ngFor="let event of data.events">
+        <span class="dot"></span>
+        <div>
+          <div class="event-title">
+            <strong>{{ event.stepName }} · {{ event.eventType.replaceAll('_', ' ') }}</strong>
+            <time>{{ event.createdAt | date:'medium' }}</time>
+          </div>
+          <p>{{ event.message }}</p>
+          <small>Attempt {{ event.attemptNumber }}</small>
+        </div>
+      </article>
+
+      <p class="empty" *ngIf="data.events.length === 0">No audit events recorded.</p>
+    </div>
+  </section>
+</ng-container>

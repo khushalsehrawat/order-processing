@@ -1,0 +1,24 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/">
+      <span class="brand-mark">OF</span>
+      <span>
+        <strong>OrderFlow</strong>
+        <small>Saga Operations Console</small>
+      </span>
+    </a>
+
+    <div class="environment">
+      <span class="pulse"></span>
+      Coordinator: localhost:8080
+    </div>
+  </header>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer>
+    Order Processing Assignment · {{ year }}
+  </footer>
+</div>
