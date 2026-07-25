@@ -1,3 +1,0 @@
-order_id,customer_id,product_id,quantity,amount,fail_at,comp_fail_at
-DEMO-PAYMENT-FAIL-001,CUST-PAY-001,SKU-PHONE,1,19999.00,PAYMENT,
-DEMO-PAYMENT-FAIL-002,CUST-PAY-002,SKU-BAG,3,2997.00,PAYMENT,

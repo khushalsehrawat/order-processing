@@ -1,4 +1,0 @@
-order_id,customer_id,product_id,quantity,amount,fail_at,comp_fail_at
-ORD-SUCCESS-001,CUST-001,SKU-BOOK-001,1,499.00,,
-ORD-SUCCESS-002,CUST-002,SKU-MOUSE-002,2,1598.00,,
-ORD-SUCCESS-003,CUST-003,SKU-KEYBOARD-003,1,2499.00,,

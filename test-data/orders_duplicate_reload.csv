@@ -1,4 +1,0 @@
-order_id,customer_id,product_id,quantity,amount,fail_at,comp_fail_at
-ORD-DUP-001,CUST-031,SKU-CABLE-031,2,398.00,,
-ORD-DUP-002,CUST-032,SKU-CHARGER-032,1,899.00,,
-ORD-DUP-003,CUST-033,SKU-STAND-033,1,1299.00,PAYMENT,
