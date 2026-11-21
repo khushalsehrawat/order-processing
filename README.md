@@ -414,3 +414,6 @@ $env:NOTIFICATION_INTERVAL_MS="10000"
 - Shipped-order notification processing
 - Angular dashboard for upload, status review, retry, shipped action, and reset
 - Test CSV files for success, failure, compensation failure, duplicate upload, and notification scenarios
+
+
+##### Develop & Maintained by - www.thebenzzcreations.com
